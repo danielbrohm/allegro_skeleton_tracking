@@ -1,0 +1,6 @@
+[submodule "ros_openpose"]
+	path = ros_openpose
+	url = https://github.com/ravijo/ros_openpose.git
+[submodule "zed-ros-wrapper"]
+	path = zed-ros-wrapper
+	url = https://github.com/stereolabs/zed-ros-wrapper.git
