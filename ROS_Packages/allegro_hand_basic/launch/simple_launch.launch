@@ -1,0 +1,19 @@
+<launch>
+
+  <arg name="model" default="$(find allegro_hand_basic)/allegro_hand_description/allegro_hand_description_right.urdf"/>
+  <arg name="rvizconfig" default="$(find allegro_hand_basic)/allegro_hand_description/allegro_hand_config.rviz" />
+
+  <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
+  
+
+  <!--<node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" /> -->
+  <node name="joint_state_publisher" pkg="allegro_hand_basic" type="state_publisher_basic" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+  <node name="kalman_filter" pkg="allegro_hand_basic" type="kalman_filter.py" />
+  <include file="$(find ros_openpose)/launch/run.launch">
+    <arg name="camera" value="zed" />
+    <arg name="skeleton_hands" value="true" />
+    <arg name="rviz" value="false" />
+  </include>
+</launch>

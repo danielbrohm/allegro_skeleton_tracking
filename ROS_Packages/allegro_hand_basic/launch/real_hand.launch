@@ -1,0 +1,64 @@
+<launch>
+  <!-- Visualization with rviz-->
+  <arg name="rvizconfig" default="$(find allegro_hand_basic)/allegro_hand_description/allegro_hand_config.rviz" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" >
+     <remap from="/tf" to="/allegroHand/tf"/> 
+  </node>
+
+  <arg name="POLLING" default="true"/> <!-- true, false for polling the CAN communication -->
+
+  <!-- ls -l /dev/pcan* to see your open CAN ports. Auto means find it
+       automatically, and ignores the CAN_DEVICE argument. -->
+  <arg name="AUTO_CAN" default="true" />
+  <arg name="CAN_DEVICE" default="/dev/pcanusb1" />
+
+  <!--If true, respawn the controller if it dies. -->
+  <arg name="RESPAWN" default="false"/>
+
+  <!-- Load the robot description directly from the xacro file. -->
+  <arg name="description_model" default="$(find allegro_hand_basic)/allegro_hand_description/allegro_hand_description_right.urdf"/>
+  <param name="robot_description" command="$(find xacro)/xacro $(arg description_model)" />
+  
+
+  <!-- Allegro Hand controller and communication node. -->
+  <node name="allegroHand_right"
+        pkg="allegro_hand_controllers"
+        type="allegro_node_grasp"
+        output="screen"
+        clear_params="true"
+        respawn="$(arg RESPAWN)"
+        respawn_delay="2"
+        args="$(arg POLLING)" >
+
+    <!-- Set the CAN channel automatically (using detect_pcan.py) if the
+         AUTO_CAN parameter is true, otherwise use the CAN_DEVICE
+         argument. NOTE: To manually set the can device, you must *also* set
+         AUTO_CAN:=false. -->
+    <param name="/comm/CAN_CH" value="$(arg CAN_DEVICE)"
+           unless="$(arg AUTO_CAN)" />
+    <param name="/comm/CAN_CH"
+           command="$(find allegro_hand_description)/scripts/detect_pcan.py"
+           if="$(arg AUTO_CAN)" />
+
+    <param name="/hand_info/which_hand" value="right" /> 
+  </node>
+
+
+  <node name="joint_state_publisher" pkg="allegro_hand_basic" type="state_publisher_basic" required = "true" />
+  <node name="kalman_filter" pkg="allegro_hand_basic" type="kalman_filter.py" />
+  <include file="$(find ros_openpose)/launch/run.launch">
+    <arg name="camera" value="zed" />
+    <arg name="skeleton_hands" value="true" />
+    <arg name="rviz" value="false" />
+  </include>
+
+
+    <!-- Joint States (angles) to Joint Transforms -->
+  <node name="jointState2tf"
+        pkg="robot_state_publisher"
+        output="screen" 
+        type="robot_state_publisher">
+    <remap from="tf" to="allegroHand/tf"/>
+    <remap from="joint_states" to="allegroHand/joint_states"/>
+  </node>
+</launch>
