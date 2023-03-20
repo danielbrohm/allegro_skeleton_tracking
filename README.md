@@ -22,12 +22,12 @@ The Docker container includes the installation of ROS, Openpose, Cuda 11.7 and C
 	roslaunch allegro_hand_basic simple_launch.launch
 
 # Interesting docker commands:
-sudo docker container prune 			removes all stopped containers
-sudo docker images 				show all images
-sudo docker rmi images_id 			remove image with named image_id
-sudo docker container ls --all		show all containers, also the stopped ones
-sudo docker start -a <container-id>		enter a stopped container (-a option attaches the terminal output)
-sudo docker exec -it <container-id> bash	open a new bash of an already started docker container
+- sudo docker container prune 		removes all stopped containers
+- sudo docker images 				show all images
+- sudo docker rmi images_id 			remove image with named image_id
+- sudo docker container ls --all		show all containers, also the stopped ones
+- sudo docker start -a <container-id>		enter a stopped container (-a option attaches the terminal output)
+- sudo docker exec -it <container-id> bash	open a new bash of an already started docker container
 
 # Trouble-Shooting:
 	Docker trouble-shooting:
