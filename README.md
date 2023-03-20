@@ -3,7 +3,7 @@
 This project allows the installation of a Docker container for controlling the Allegro Hand V4 by demonstrating grasps in front of a ZED camera.
 The Docker container includes the installation of ROS, Openpose, Cuda 11.7 and CudNN.
 
-For executing the program the following steps have to be followed:
+# For executing the program the following steps have to be followed:
 1. Install ZED SDK on host machine (https://www.stereolabs.com/developers/release/) (Version 3.8.2 worked)
 	- During ZED SDK installation agree to installation of CUDA, cudNN if not already installed
 2. Install Docker Desktop (https://docs.docker.com/desktop/install/linux-install/)
@@ -21,15 +21,15 @@ For executing the program the following steps have to be followed:
 	catkin_make
 	roslaunch allegro_hand_basic simple_launch.launch
 
-Interesting docker commands:
-sudo docker container prune 		# removes all stopped containers
-sudo docker images 			# show all images
-sudo docker rmi images_id 		# remove image with named image_id
-sudo docker container ls --all	# show all containers, also the stopped ones
-sudo docker start -a <container-id>	# enter a stopped container (-a option attaches the terminal output)
-sudo docker exec -it <container-id> bash	# open a new bash of an already started docker container
+# Interesting docker commands:
+sudo docker container prune 			removes all stopped containers
+sudo docker images 				show all images
+sudo docker rmi images_id 			remove image with named image_id
+sudo docker container ls --all		show all containers, also the stopped ones
+sudo docker start -a <container-id>		enter a stopped container (-a option attaches the terminal output)
+sudo docker exec -it <container-id> bash	open a new bash of an already started docker container
 
-Trouble-Shooting:
+# Trouble-Shooting:
 	Docker trouble-shooting:
 		When trying to use openpose inside the created docker:
 		(OpenPose 1.7.0:32): Gtk-WARNING **: 15:12:43.538: cannot open display: :1
