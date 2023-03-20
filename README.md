@@ -1,22 +1,22 @@
 # Allegro Skeleton Tracking
 
 This project allows the installation of a Docker container for controlling the Allegro Hand V4 by demonstrating grasps in front of a ZED camera.
-The Docker container includes the installation of ROS, Openpose, Cuda 11.7 and CudNN.
+The Docker container includes the installation of Ubuntu 20.04, ROS Noetic, Openpose, Cuda 11.7 and CudNN.
 
 # For executing the program the following steps have to be followed:
 1. Install ZED SDK on host machine (https://www.stereolabs.com/developers/release/) (Version 3.8.2 worked)
 	- During ZED SDK installation agree to installation of CUDA, cudNN if not already installed
 2. Install Docker Desktop (https://docs.docker.com/desktop/install/linux-install/)
 3. Install Nvidia Docker runtime (https://github.com/NVIDIA/nvidia-docker#quickstart)
-4. clone this git repository
-5. Enter root directory of this repository (the one which contains the Dockerfile)
-6. Install docker image by running:
+4. Clone this git repository
+5. In a terminal enter root directory of this repository (the one which contains the Dockerfile)
+6. Install the docker image by running:
 	sudo docker build -t allegro_skeleton_tracking .
-7. Wait for installation of docker image to finish and get a coffee (Last around 30 minutes)
+7. Wait for installation of docker image to finish and get a coffee (Lasts around 30 minutes)
 8. For allowing the docker container to open a Display call:
 	xhost +local:docker 
-9. Start a Docker container with the following commands including the appropriate tags (change path/to/allegro_skeleton_tracking to the folder, where you cloned the repository):
-	sudo docker run --gpus all -it --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility,video --mount type=bind,src=/usr/local/zed,target=/usr/local/zed --mount type=bind,src=path/to/allegro_skeleton_tracking/ROS_Packages,target=/home/catkin_ws/src --privileged -e  DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix allegro_skeleton_tracking /bin/bash
+9. Start a Docker container with the following commands including the appropriate tags (change /path/to/allegro_skeleton_tracking to the absolute path of the folder, where you cloned the repository):
+	sudo docker run --gpus all -it --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility,video --mount type=bind,src=/usr/local/zed,target=/usr/local/zed --mount type=bind,src=/path/to/allegro_skeleton_tracking/ROS_Packages,target=/home/catkin_ws/src --privileged -e  DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix allegro_skeleton_tracking /bin/bash
 10. Inside the Docker container run (If the following commands fail, just repeat them until they succeed): 
 	catkin_make
 	roslaunch allegro_hand_basic simple_launch.launch
