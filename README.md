@@ -69,6 +69,7 @@ The Docker container includes the installation of Ubuntu 20.04, ROS Noetic, Open
 					LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/your_username/openpose/build/caffe/lib
 					export LD_LIBRARY_PATH
 				2. Start a new terminal
+				kj
  
 
 
