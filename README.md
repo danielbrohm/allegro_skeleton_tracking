@@ -69,7 +69,10 @@ The Docker container includes the installation of Ubuntu 20.04, ROS Noetic, Open
 					LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/your_username/openpose/build/caffe/lib
 					export LD_LIBRARY_PATH
 				2. Start a new terminal
-				kj
+			-When calling roslaunch ros_openpose run.launch camera:=zed:	
+			error: [ INFO] [1681991405.601017605]: ZED connection -> CAMERA FAILED TO SETUP
+			solution:
+				Plug in Zed camera before opening the docker container.
  
 
 
