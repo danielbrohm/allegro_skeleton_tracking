@@ -10,19 +10,19 @@ This project allows the installation of a Docker container for controlling the A
 4. Clone this git repository.
 5. In a terminal enter root directory of this repository (the one which contains the Dockerfile).
 6. Install the docker image by running:
-	sudo docker build -t allegro_skeleton_tracking .
+	- sudo docker build -t allegro_skeleton_tracking .
 7. Wait for installation of docker image to finish and get a coffee (Lasts around 30 minutes).
 8. For allowing the docker container to open a Display call:
-	xhost +local:docker 
+	- xhost +local:docker 
 9. Start a Docker container with the following commands including the appropriate tags (change /path/to/allegro_skeleton_tracking to the absolute path of the folder, where you cloned the repository):
-	sudo docker run --gpus all -it --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility,video --mount type=bind,src=/usr/local/zed,target=/usr/local/zed --mount type=bind,src=/path/to/allegro_skeleton_tracking/ROS_Packages,target=/home/catkin_ws/src --privileged -e  DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix allegro_skeleton_tracking /bin/bash
+	- sudo docker run --gpus all -it --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility,video --mount type=bind,src=/usr/local/zed,target=/usr/local/zed --mount type=bind,src=/path/to/allegro_skeleton_tracking/ROS_Packages,target=/home/catkin_ws/src --privileged -e  DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix allegro_skeleton_tracking /bin/bash
 10. Inside the Docker container run (If catkin_make fails, just repeat it until it succeeds): 
-	catkin_make
+	- catkin_make
 11. Launch the Allegro hand control (Note: The thumb is not displayed correctly in the simulation due to a sensor error):
-	For controlling a real Allegro hand use:
-		roslaunch allegro_hand_visual_control real_hand.launch
-	For an RVIZ simulation without a real Allegro hand use:
-		roslaunch allegro_hand_visual_control simulation.launch
+	- For controlling a real Allegro hand use:
+		- roslaunch allegro_hand_visual_control real_hand.launch
+	- For an RVIZ simulation without a real Allegro hand use:
+		- roslaunch allegro_hand_visual_control simulation.launch
 12. Move your fingers into different grasping positions using two, three or four fingers. The fith finger can be used for demonstration as well but the Alegro hand has only four fingers for imitation. On the video that pops up, make sure that Openpose recognizes the correct fingers and doesn't mix them up. Rotating your hand a bit and varrying the distance can help for a better detection. 
 13. End the program by showing a peace sign (only index and middle finger are extended and spread apart in a V-pose) or pressing ctrl + c.
 14. Leave the docker container by pressing ctrl + d.
