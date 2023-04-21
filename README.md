@@ -1,6 +1,6 @@
 # Allegro Skeleton Tracking
 
-This project allows the installation of a Docker container for controlling the Allegro Hand V4 by demonstrating grasps with two, three and four fingers in front of a ZED camera. The Docker container includes the installation of Ubuntu 20.04, ROS Noetic, Openpose, Cuda 11.7 and CudNN.
+This project allows the installation of a Docker container for controlling the Allegro Hand V4 by demonstrating grasps with two, three and four fingers in front of a ZED camera. The Docker container includes the installation of Ubuntu 20.04, ROS Noetic, Openpose, Cuda 11.7 and CudNN. 
 
 # For executing the program the following steps have to be followed:
 1. Install ZED SDK on host machine (https://www.stereolabs.com/developers/release/) (Version 3.8.2 worked).

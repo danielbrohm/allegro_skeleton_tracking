@@ -2,7 +2,7 @@
 This ROS-node (state_publisher_hand) publishes joint positions for an Allegro hand (right hand). 
 The two dimensional pixel positions of the hand's joints in live video are constantly read through a subscription to "ros_openpose". 
 The video is provided by a ZED camera. 
-Calculated joint angles, based on the monitored joint positions, are sent to the Allegro hand. 
+Calculated joint angles, based on the monitored joint positions are first sent through a Kalman filter and the to the Allegro hand. 
 This allows the hand to imitate different grasps, using 2, 3, and 4 fingers.
 Program can be shut down by demostrating a peace sign (only index and middle finger are extended and spread apart in a V-pose).
 */
