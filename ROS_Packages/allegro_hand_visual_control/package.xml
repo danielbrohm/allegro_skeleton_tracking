@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>allegro_hand_basic</name>
+  <name>allegro_hand_visual_control</name>
   <version>0.0.0</version>
-  <description>The allegro_hand_basic package</description>
+  <description>The allegro_hand_visual_control package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

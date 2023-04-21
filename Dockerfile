@@ -1,11 +1,10 @@
-# https://hub.docker.com/r/cwaffles/openpose
 FROM nvidia/cuda:11.7.0-cudnn8-devel-ubuntu20.04
 
 #get deps
 RUN apt-get update && \
 DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
 python3-dev python3-pip python3-setuptools git g++ wget make libprotobuf-dev protobuf-compiler libopencv-dev \
-libgoogle-glog-dev libboost-all-dev libhdf5-dev libatlas-base-dev libcanberra-gtk-module libcanberra-gtk3-module lsb-release 
+libgoogle-glog-dev libboost-all-dev libhdf5-dev libatlas-base-dev libcanberra-gtk-module libcanberra-gtk3-module lsb-release libturbojpeg
 
 #for python api
 RUN pip3 install --upgrade pip
@@ -16,10 +15,6 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.16.0/cmake-3.16.0
 tar xzf cmake-3.16.0-Linux-x86_64.tar.gz -C /opt && \
 rm cmake-3.16.0-Linux-x86_64.tar.gz
 ENV PATH="/opt/cmake-3.16.0-Linux-x86_64/bin:${PATH}"
-
-
-
-#RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y sudo
 
 #install ros
 RUN DEBIAN_FRONTEND=noninteractive sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' && \
@@ -34,8 +29,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     libturbojpeg ros-noetic-libpcan \
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && \
-DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libturbojpeg
 
 RUN rosdep init && rosdep update
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(allegro_hand_basic)
+project(allegro_hand_visual_control)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -50,8 +50,10 @@ include_directories(
   #${PROJECT_SOURCE_DIR}/include
 )
 
-add_executable(state_publisher_basic src/state_publisher_basic.cpp)
-target_link_libraries(state_publisher_basic ${catkin_LIBRARIES})
+add_executable(state_publisher_simulation src/state_publisher_simulation.cpp)
+target_link_libraries(state_publisher_simulation ${catkin_LIBRARIES})
+add_executable(state_publisher_hand src/state_publisher_hand.cpp)
+target_link_libraries(state_publisher_hand ${catkin_LIBRARIES})
 
 
 catkin_install_python(PROGRAMS scripts/kalman_filter.py

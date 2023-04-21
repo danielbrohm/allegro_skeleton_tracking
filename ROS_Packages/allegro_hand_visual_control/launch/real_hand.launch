@@ -1,6 +1,6 @@
 <launch>
   <!-- Visualization with rviz-->
-  <arg name="rvizconfig" default="$(find allegro_hand_basic)/allegro_hand_description/allegro_hand_config.rviz" />
+  <arg name="rvizconfig" default="$(find allegro_hand_visual_control)/allegro_hand_description/allegro_hand_config.rviz" />
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" >
      <remap from="/tf" to="/allegroHand/tf"/> 
   </node>
@@ -16,7 +16,7 @@
   <arg name="RESPAWN" default="false"/>
 
   <!-- Load the robot description directly from the xacro file. -->
-  <arg name="description_model" default="$(find allegro_hand_basic)/allegro_hand_description/allegro_hand_description_right.urdf"/>
+  <arg name="description_model" default="$(find allegro_hand_visual_control)/allegro_hand_description/allegro_hand_description_right.urdf"/>
   <param name="robot_description" command="$(find xacro)/xacro $(arg description_model)" />
   
 
@@ -44,8 +44,8 @@
   </node>
 
 
-  <node name="joint_state_publisher" pkg="allegro_hand_basic" type="state_publisher_basic" required = "true" />
-  <node name="kalman_filter" pkg="allegro_hand_basic" type="kalman_filter.py" />
+  <node name="joint_state_publisher" pkg="allegro_hand_visual_control" type="state_publisher_hand" required = "true" />
+  <node name="kalman_filter" pkg="allegro_hand_visual_control" type="kalman_filter.py" />
   <include file="$(find ros_openpose)/launch/run.launch">
     <arg name="camera" value="zed" />
     <arg name="skeleton_hands" value="true" />

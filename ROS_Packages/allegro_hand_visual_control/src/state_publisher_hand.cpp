@@ -4,6 +4,7 @@ The two dimensional pixel positions of the hand's joints in live video are const
 The video is provided by a ZED camera. 
 Calculated joint angles, based on the monitored joint positions, are sent to the Allegro hand. 
 This allows the hand to imitate different grasps, using 2, 3, and 4 fingers.
+Program can be shut down by demostrating a peace sign (only index and middle finger are extended and spread apart in a V-pose).
 */
 
 #include <string>
@@ -20,13 +21,12 @@ const int DOF_JOINTS = 16;          // Degrees of freedom of the Allegro hand
 const double pi = 3.14159265359;
 
 // Class for publishing joint positions for the Allegro hand.
-class State_Publisher_Basic{
+class State_Publisher_Hand{
     public:
         void initialize_system(ros::NodeHandle *n);
         void hand_startup(ros::Rate loop_rate);
         void loop(void);
         int get_classifier(void);
-        void publish_tf_hand(void);
     private:
         ros::Publisher joint_prekalman_pub;
         ros::Publisher joint_pub;
@@ -65,18 +65,19 @@ class State_Publisher_Basic{
 
 
 // Function to initialize publishers, subscribers and joint positions of the Allegro hand
-void State_Publisher_Basic::initialize_system(ros::NodeHandle *n) 
+void State_Publisher_Hand::initialize_system(ros::NodeHandle *n) 
 {   
     // Create a publisher for joint states before passing through the Kalman filter
     joint_prekalman_pub = n->advertise<sensor_msgs::JointState>("joint_prekalman_states", 1000);
     // Create a publisher for final joint states to be sent to the Allegro hand
-    joint_pub = n->advertise<sensor_msgs::JointState>("joint_states", 1000);
+    joint_pub = n->advertise<sensor_msgs::JointState>("allegroHand/joint_cmd", 1000);
+
     // Subscribe to frame data from rosOpenpose
-    sub = n->subscribe("/frame", 1, &State_Publisher_Basic::FrameOpenposeCallback, this);
+    sub = n->subscribe("/frame", 1, &State_Publisher_Hand::FrameOpenposeCallback, this);
     // Subscribe to data from Kalman filter
-    sub_kalman = n->subscribe("/joint_postkalman_states", 1, &State_Publisher_Basic::KalmanCallback, this);
+    sub_kalman = n->subscribe("/joint_postkalman_states", 1, &State_Publisher_Hand::KalmanCallback, this);
     // Subscribe to measured joint states of the Allegro hand
-    measured_joints_sub = n->subscribe("/allegroHand/joint_states", 1, &State_Publisher_Basic::MeasuredJointsCallback, this);
+    measured_joints_sub = n->subscribe("/allegroHand/joint_states", 1, &State_Publisher_Hand::MeasuredJointsCallback, this);
 
     // Resize and set the timestamp for the joint_prekalman_state (angles in rad)
     joint_prekalman_state.position.resize(DOF_JOINTS);
@@ -90,6 +91,7 @@ void State_Publisher_Basic::initialize_system(ros::NodeHandle *n)
 
     // Resize and set the timestamp for the measured_joints (angles in rad), which are sent by the allegro_hand
     measured_joints.position.resize(DOF_JOINTS);
+    measured_joints.velocity.resize(DOF_JOINTS);
     measured_joints.name.resize(DOF_JOINTS);
     measured_joints.header.stamp = ros::Time::now();
     
@@ -104,7 +106,7 @@ void State_Publisher_Basic::initialize_system(ros::NodeHandle *n)
 
 // Function for updating the pixel positions of each joint received by ros_openpose
 // The pixel positions in the video of the ZED camera are saved
-void State_Publisher_Basic::FrameOpenposeCallback(const ros_openpose::Frame& msg)
+void State_Publisher_Hand::FrameOpenposeCallback(const ros_openpose::Frame& msg)
 { 
     if (msg.persons.empty())
     {
@@ -121,7 +123,7 @@ void State_Publisher_Basic::FrameOpenposeCallback(const ros_openpose::Frame& msg
 }
 
 // Callback function for the kalman-filtered joint positions (angles in rad)
-void State_Publisher_Basic::KalmanCallback(const std_msgs::Float64MultiArray& msg)
+void State_Publisher_Hand::KalmanCallback(const std_msgs::Float64MultiArray& msg)
 {
     for (int i = 0; i<16; i++)
     {
@@ -130,7 +132,7 @@ void State_Publisher_Basic::KalmanCallback(const std_msgs::Float64MultiArray& ms
 }
 
 // Callback function for the current joint position (angles in rad), which are sent by the Allegro hand
-void State_Publisher_Basic::MeasuredJointsCallback(const sensor_msgs::JointState& msg)
+void State_Publisher_Hand::MeasuredJointsCallback(const sensor_msgs::JointState& msg)
 {
     for (int i = 0; i<16; i++)
     {
@@ -142,7 +144,8 @@ void State_Publisher_Basic::MeasuredJointsCallback(const sensor_msgs::JointState
     }
 }
 
-void State_Publisher_Basic::hand_startup(ros::Rate loop_rate)
+//Function, which slowly brings the hand into a relaxed position at startup of the program
+void State_Publisher_Hand::hand_startup(ros::Rate loop_rate)
 {
     
     int i = 0;
@@ -186,7 +189,7 @@ void State_Publisher_Basic::hand_startup(ros::Rate loop_rate)
 /* This function publishes the joint positions for the simulation.
 First it is being classified which grasp is being executed (2,3,4-finger grasp or none)
 and then the angles are calculated accordingly. */
-void State_Publisher_Basic::loop(void)
+void State_Publisher_Hand::loop(void)
 {
     joint_state.header.stamp = ros::Time::now();
     calculated_joint_angles = calculate_joints();
@@ -384,14 +387,14 @@ void State_Publisher_Basic::loop(void)
     joint_pub.publish(joint_state);
 }
 
-int State_Publisher_Basic::get_classifier(void)
+int State_Publisher_Hand::get_classifier(void)
 {
     return classifier;
 }
 
 // Function for calculating joint angles by using the pixel positions of the joints obtained from ros_openpose.
 // A moving average filter is being used, with the input being weighted according to their accuracy declared by ros_openpose 
-std::vector<float> State_Publisher_Basic::calculate_joints(void) 
+std::vector<float> State_Publisher_Hand::calculate_joints(void) 
 {
     std::vector<float> result(8);
 
@@ -709,17 +712,19 @@ int main(int argc, char** argv) {
     ros::init(argc, argv, "state_publisher_hand");
     ros::NodeHandle n;
     ros::Rate loop_rate(12);
-    State_Publisher_Basic state_publisher_basic;
-    state_publisher_basic.initialize_system(&n);
-    state_publisher_basic.hand_startup(loop_rate);
+    State_Publisher_Hand state_publisher_hand;
+    state_publisher_hand.initialize_system(&n);
+    state_publisher_hand.hand_startup(loop_rate);
 
     while (ros::ok()) {
-        state_publisher_basic.loop();
-        if (state_publisher_basic.get_classifier()==5)
+        state_publisher_hand.loop();
+        // If a peace sign (only index and middle finger are extended and spread apart in a V-pose) was detected by the demonstrating person
+        // then the program is shut down after 20 loops
+        if (state_publisher_hand.get_classifier()==5)
         {
             for(int i = 0; i < 20; i++)
             {
-                state_publisher_basic.loop();
+                state_publisher_hand.loop();
                 ros::spinOnce();
                 loop_rate.sleep();  
             }
