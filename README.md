@@ -25,7 +25,7 @@ This project allows the installation of a Docker container for controlling the A
 	- For an RVIZ simulation without a real Allegro hand use:
 		- roslaunch allegro_hand_visual_control simulation.launch
 13. Move your fingers into different grasping positions using two, three or four fingers. The fith finger can be used for demonstration as well but the Alegro hand has only four fingers for imitation. On the video that pops up, make sure that Openpose recognizes the correct fingers and doesn't mix them up. Rotating your hand a bit and varrying the distance can help for a better detection. 
-14. End the program by showing a peace sign (only index and middle finger are extended and spread apart in a V-pose) or pressing ctrl + c.
+14. End the program by showing a peace sign (only index and middle finger are extended and spread apart in a V-pose) with the back of your hand towards the camera or by pressing ctrl + c.
 15. Leave the docker container by pressing ctrl + d.
 
 # Good-to-know docker commands:

@@ -44,7 +44,11 @@
   </node>
 
 
-  <node name="joint_state_publisher" pkg="allegro_hand_visual_control" type="state_publisher_hand" required = "true" />
+  <node name="joint_state_publisher" pkg="allegro_hand_visual_control" type="state_publisher_hand" output="screen" required = "true">
+    <rosparam>
+    logging_level: info
+  </rosparam>
+</node>
   <node name="kalman_filter" pkg="allegro_hand_visual_control" type="kalman_filter.py" />
   <include file="$(find ros_openpose)/launch/run.launch">
     <arg name="camera" value="zed" />

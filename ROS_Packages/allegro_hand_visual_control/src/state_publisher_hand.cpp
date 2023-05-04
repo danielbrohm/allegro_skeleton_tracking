@@ -204,12 +204,15 @@ void State_Publisher_Hand::loop(void)
     if(calculated_joint_angles[1]<0.05 && calculated_joint_angles[3]<0.05 && calculated_joint_angles[5]<0.05)
     {
         classifier = 0;
+        ROS_INFO("No grasp detected.");
+        
     }
     else if(abs(calculated_joint_angles[1]-calculated_joint_angles[3])<0.2 && abs(calculated_joint_angles[1]-calculated_joint_angles[5])<0.2  
         && calculated_joint_angles[1]>0.1 && calculated_joint_angles[3]>0.1 && calculated_joint_angles[5]>0.1
         && distance_tips_thumb_pinkie < 10*distance_tips_thumb_index)
     { 
         classifier = 3;
+        ROS_INFO("4-finger enclosing grasp detected.");
     }
     
     else if(distance_tips_thumb_index*3 < distance_tips_thumb_pinkie && distance_tips_thumb_middle*3 < distance_tips_thumb_pinkie &&
@@ -221,24 +224,20 @@ void State_Publisher_Hand::loop(void)
         */
     {
         classifier = 2;
+        ROS_INFO("3-fingers pinch grasp detected.");
     } 
     else if(distance_tips_thumb_index*3 < distance_tips_thumb_middle && distance_tips_thumb_index < distance_knuckle_joint1_index*2
         && calculated_joint_angles[1]>0.3 && calculated_joint_angles[5]<0.2 && calculated_joint_angles[3]<0.3)
     {
         classifier = 1;
+        ROS_INFO("2-fingers pinch grasp detected.");
     } 
-    else if(distance_tips_thumb_middle < distance_knuckle_joint1_index && distance_tips_thumb_ring < distance_knuckle_joint1_index 
-        && distance_tips_thumb_pinkie < distance_knuckle_joint1_index && distance_tips_thumb_index > 2*distance_knuckle_joint1_index
-        && calculated_joint_angles[3] > 0.5)
-    {
-        classifier = 4; //fist, but index finger is extended, used to shutdown the system  
-    }
-
     else if(distance_tips_thumb_ring < distance_knuckle_joint1_index && distance_tips_thumb_pinkie < distance_knuckle_joint1_index 
         && distance_tips_thumb_index > 2*distance_knuckle_joint1_index && distance_tips_thumb_middle > 2*distance_knuckle_joint1_index
         && calculated_joint_angles[5] > 0.5)
     {
-        classifier = 5; //peace gesture
+        classifier = 4; //peace gesture
+        ROS_INFO("Peace gesture detected. => Shutting down system.");
     }
     
     
@@ -341,30 +340,11 @@ void State_Publisher_Hand::loop(void)
     {
         joint_prekalman_state.position[3] = 0.0;
         joint_prekalman_state.position[2] = 0.0;
-        joint_prekalman_state.position[1] = -0.1;
-        joint_prekalman_state.position[0] = 0.0;
-        joint_prekalman_state.position[7] = 0.0;
-        joint_prekalman_state.position[6] = 0.0;
-        joint_prekalman_state.position[5] = -0.1;
-        joint_prekalman_state.position[4] = 0.0;
-        joint_prekalman_state.position[11] = 0.0;
-        joint_prekalman_state.position[10] = 0.0;
-        joint_prekalman_state.position[9] = -0.1;
-        joint_prekalman_state.position[8] = 0.0;
-        joint_prekalman_state.position[12] = pi/4;
-        joint_prekalman_state.position[13] = 0.0;
-        joint_prekalman_state.position[14] = 0.0;
-        joint_prekalman_state.position[15] = -pi/2;
-    }
-    else if (classifier == 5)
-    {
-        joint_prekalman_state.position[3] = 0.0;
-        joint_prekalman_state.position[2] = 0.0;
-        joint_prekalman_state.position[1] = calculated_joint_angles[3];
+        joint_prekalman_state.position[1] = 0.0;
         joint_prekalman_state.position[0] = pi/16;
         joint_prekalman_state.position[7] = 0.0;
         joint_prekalman_state.position[6] = 0.0;
-        joint_prekalman_state.position[5] = calculated_joint_angles[3];
+        joint_prekalman_state.position[5] = 0.0;
         joint_prekalman_state.position[4] = -pi/16;
         joint_prekalman_state.position[11] = 0.8*0.78;
         joint_prekalman_state.position[10] = 1.6*0.78;
@@ -720,7 +700,7 @@ int main(int argc, char** argv) {
         state_publisher_hand.loop();
         // If a peace sign (only index and middle finger are extended and spread apart in a V-pose) was detected by the demonstrating person
         // then the program is shut down after 20 loops
-        if (state_publisher_hand.get_classifier()==5)
+        if (state_publisher_hand.get_classifier()==4)
         {
             for(int i = 0; i < 20; i++)
             {
